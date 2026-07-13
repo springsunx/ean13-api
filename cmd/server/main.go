@@ -23,18 +23,18 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// REST API routes
+	// All routes handled by api handler (includes frontend, API, and health)
 	apiMux := api.NewHandler()
-	mux.Handle("/api/", apiMux)
-	mux.Handle("/health", apiMux)
+	mux.Handle("/", apiMux)
 
 	// MCP HTTP endpoint
 	mux.Handle("/mcp", httpMCP)
 
 	addr := ":" + port
 	fmt.Printf("EAN-13 barcode API server starting on %s\n", addr)
-	fmt.Printf("  REST: POST /api/decode, GET /health\n")
-	fmt.Printf("  MCP:  POST /mcp  (StreamableHTTP)\n")
+	fmt.Printf("  Frontend: http://localhost%s/\n", addr)
+	fmt.Printf("  REST API: POST /api/decode, GET /health\n")
+	fmt.Printf("  MCP:      POST /mcp  (StreamableHTTP)\n")
 
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatalf("server failed: %v", err)

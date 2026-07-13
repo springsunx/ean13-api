@@ -1,0 +1,272 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 14px;
+}
+
+.upload-area {
+    border: 3px dashed #ccc;
+    border-radius: 12px;
+    padding: 60px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: #667eea;
+    background: #f0f0ff;
+}
+
+.upload-icon {
+    color: #999;
+    margin-bottom: 16px;
+}
+
+.upload-area:hover .upload-icon,
+.upload-area.dragover .upload-icon {
+    color: #667eea;
+}
+
+.upload-text {
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.upload-hint {
+    color: #999;
+    font-size: 13px;
+}
+
+kbd {
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.preview-area {
+    position: relative;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.preview-area img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-clear {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-clear:hover {
+    background: rgba(255, 0, 0, 0.9);
+}
+
+.btn-decode {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-decode:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-decode:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-decode.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-decode.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.result-area {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.result-area h2 {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.result-item {
+    margin-bottom: 16px;
+}
+
+.result-item:last-child {
+    margin-bottom: 0;
+}
+
+.result-item label {
+    display: block;
+    color: #666;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.result-value {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    font-family: "Courier New", monospace;
+    word-break: break-all;
+}
+
+.btn-copy {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-copy:hover {
+    background: #5a6fd6;
+}
+
+.btn-copy.copied {
+    background: #28a745;
+}
+
+.error-area {
+    margin-top: 20px;
+    padding: 16px;
+    background: #fff5f5;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    color: #c62828;
+    text-align: center;
+}
+
+footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+}
+
+footer a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 24px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .upload-area {
+        padding: 40px 16px;
+    }
+}

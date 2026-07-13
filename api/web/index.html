@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EAN-13 条码解码器</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>EAN-13 条码解码器</h1>
+            <p class="subtitle">上传图片或粘贴图片，自动识别 EAN-13 条码</p>
+        </header>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+            </div>
+            <p class="upload-text">拖拽图片到此处</p>
+            <p class="upload-hint">或点击选择文件，或按 <kbd>Ctrl+V</kbd> 粘贴图片</p>
+            <input type="file" id="fileInput" accept="image/*" hidden>
+        </div>
+
+        <div class="preview-area" id="previewArea" style="display: none;">
+            <img id="previewImage" src="" alt="预览图片">
+            <button class="btn-clear" id="btnClear" title="清除图片">&times;</button>
+        </div>
+
+        <button class="btn-decode" id="btnDecode" disabled>开始解码</button>
+
+        <div class="result-area" id="resultArea" style="display: none;">
+            <h2>解码结果</h2>
+            <div class="result-content">
+                <div class="result-item">
+                    <label>条码内容</label>
+                    <div class="result-value" id="resultText"></div>
+                    <button class="btn-copy" id="btnCopy" title="复制到剪贴板">复制</button>
+                </div>
+                <div class="result-item">
+                    <label>条码格式</label>
+                    <div class="result-value" id="resultFormat"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="error-area" id="errorArea" style="display: none;">
+            <p id="errorText"></p>
+        </div>
+
+        <footer>
+            <p>基于 <a href="https://github.com/makiuchi-d/gozxing" target="_blank">gozxing</a> 构建</p>
+        </footer>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
