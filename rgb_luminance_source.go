@@ -1,7 +1,8 @@
 package gozxing
 
 import (
-	errors "golang.org/x/xerrors"
+	"errors"
+	"fmt"
 )
 
 type RGBLuminanceSource struct {
@@ -46,7 +47,7 @@ func NewRGBLuminanceSource(width, height int, pixels []int) LuminanceSource {
 
 func (this *RGBLuminanceSource) GetRow(y int, row []byte) ([]byte, error) {
 	if y < 0 || y >= this.GetHeight() {
-		return row, errors.Errorf("IllegalArgumentException: Requested row is outside the image: %d", y)
+		return row, fmt.Errorf("IllegalArgumentException: Requested row is outside the image: %d", y)
 	}
 	width := this.GetWidth()
 	if row == nil || len(row) < width {

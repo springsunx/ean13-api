@@ -1,9 +1,9 @@
 package mcpserver
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
-	"fmt"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -12,8 +12,7 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/springsunx/ean13-api"
-	"github.com/springsunx/ean13-api/oned"
+	"github.com/springsunx/ean13-api/decode"
 )
 
 // NewMCPServer creates a configured MCP server with EAN-13 decode tools.
@@ -53,18 +52,18 @@ func decodeBase64Tool() mcp.Tool {
 func handleDecodeFile(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	path, err := request.RequireString("path")
 	if err != nil {
-		return mcp.NewToolResultError(err.Error()), nil
+		return mcp.NewToolResultError("missing required parameter: path"), nil
 	}
 
 	file, err := os.Open(path)
 	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("cannot open file: %v", err)), nil
+		return mcp.NewToolResultError("cannot open file: check that the path exists and is accessible"), nil
 	}
 	defer file.Close()
 
 	img, _, err := image.Decode(file)
 	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("cannot decode image: %v", err)), nil
+		return mcp.NewToolResultError("cannot decode image: unsupported or corrupted image format"), nil
 	}
 
 	return decodeImage(img)
@@ -73,7 +72,7 @@ func handleDecodeFile(ctx context.Context, request mcp.CallToolRequest) (*mcp.Ca
 func handleDecodeBase64(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	b64, err := request.RequireString("image")
 	if err != nil {
-		return mcp.NewToolResultError(err.Error()), nil
+		return mcp.NewToolResultError("missing required parameter: image"), nil
 	}
 
 	// Strip data URI prefix if present
@@ -83,31 +82,22 @@ func handleDecodeBase64(ctx context.Context, request mcp.CallToolRequest) (*mcp.
 
 	data, err := base64.StdEncoding.DecodeString(b64)
 	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("invalid base64: %v", err)), nil
+		return mcp.NewToolResultError("invalid base64 data"), nil
 	}
 
-	img, _, err := image.Decode(strings.NewReader(string(data)))
+	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("cannot decode image: %v", err)), nil
+		return mcp.NewToolResultError("cannot decode image: unsupported or corrupted image format"), nil
 	}
 
 	return decodeImage(img)
 }
 
 func decodeImage(img image.Image) (*mcp.CallToolResult, error) {
-	bmp, err := gozxing.NewBinaryBitmapFromImage(img)
-	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("bitmap error: %v", err)), nil
-	}
-
-	reader := oned.NewEAN13Reader()
-	hints := map[gozxing.DecodeHintType]interface{}{
-		gozxing.DecodeHintType_TRY_HARDER: true,
-	}
-	result, err := reader.Decode(bmp, hints)
+	result, err := decode.EAN13(img)
 	if err != nil {
 		return mcp.NewToolResultError("no EAN-13 barcode found in image"), nil
 	}
 
-	return mcp.NewToolResultText(result.GetText()), nil
+	return mcp.NewToolResultText(result.Text), nil
 }

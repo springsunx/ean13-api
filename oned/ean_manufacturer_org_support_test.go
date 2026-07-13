@@ -126,7 +126,7 @@ func TestLookupCountryIdentifier(t *testing.T) {
 	testLookupCountryIdentifier(t, "8991234", "ID")
 	testLookupCountryIdentifier(t, "9001234", "AT")
 	testLookupCountryIdentifier(t, "9301234", "AU")
-	testLookupCountryIdentifier(t, "9401234", "AZ")
+	testLookupCountryIdentifier(t, "9401234", "GS1")
 	testLookupCountryIdentifier(t, "9551234", "MY")
 	testLookupCountryIdentifier(t, "9581234", "MO")
 }

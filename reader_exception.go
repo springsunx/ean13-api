@@ -3,7 +3,7 @@ package gozxing
 import (
 	"fmt"
 
-	errors "golang.org/x/xerrors"
+	"github.com/springsunx/ean13-api/xerr"
 )
 
 type ReaderException interface {
@@ -26,7 +26,7 @@ func (readerException) readerException() {}
 type exception struct {
 	msg   string
 	next  error
-	frame errors.Frame
+	frame xerr.Frame
 }
 
 func newException(prefix string, args ...interface{}) exception {
@@ -37,7 +37,7 @@ func newException(prefix string, args ...interface{}) exception {
 	return exception{
 		msg,
 		nil,
-		errors.Caller(2),
+		xerr.Caller(3),
 	}
 }
 
@@ -45,7 +45,7 @@ func wrapException(msg string, next error) exception {
 	return exception{
 		msg,
 		next,
-		errors.Caller(2),
+		xerr.Caller(3),
 	}
 }
 
@@ -58,11 +58,11 @@ func (e exception) Unwrap() error {
 }
 
 func (e exception) Format(s fmt.State, v rune) {
-	errors.FormatError(e, s, v)
+	xerr.FormatError(e, s, v)
 }
 
-func (e exception) FormatError(p errors.Printer) error {
+func (e exception) FormatError(p xerr.Printer) error {
 	p.Print(e.msg)
-	e.frame.Format(p)
+	xerr.FormatFrame(e.frame, p)
 	return e.next
 }

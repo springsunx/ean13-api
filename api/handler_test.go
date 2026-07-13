@@ -155,3 +155,82 @@ func TestHandleDecode_WithRealBarcode(t *testing.T) {
 		t.Fatalf("format = %q, want %q", resp.Format, "EAN_13")
 	}
 }
+
+func TestHandleFrontend_Root(t *testing.T) {
+	handler := NewHandler()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("root path returned status %d, want %d", w.Code, http.StatusOK)
+	}
+
+	ct := w.Header().Get("Content-Type")
+	if ct != "text/html; charset=utf-8" {
+		t.Fatalf("Content-Type = %q, want %q", ct, "text/html; charset=utf-8")
+	}
+
+	body := w.Body.String()
+	if len(body) == 0 {
+		t.Fatal("root path returned empty body")
+	}
+	if !bytes.Contains(w.Body.Bytes(), []byte("EAN-13")) {
+		t.Fatal("root page does not contain expected content")
+	}
+}
+
+func TestHandleFrontend_CSS(t *testing.T) {
+	handler := NewHandler()
+	req := httptest.NewRequest(http.MethodGet, "/style.css", nil)
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("style.css returned status %d, want %d", w.Code, http.StatusOK)
+	}
+
+	ct := w.Header().Get("Content-Type")
+	if ct != "text/css; charset=utf-8" {
+		t.Fatalf("Content-Type = %q, want %q", ct, "text/css; charset=utf-8")
+	}
+}
+
+func TestHandleFrontend_JS(t *testing.T) {
+	handler := NewHandler()
+	req := httptest.NewRequest(http.MethodGet, "/app.js", nil)
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("app.js returned status %d, want %d", w.Code, http.StatusOK)
+	}
+
+	ct := w.Header().Get("Content-Type")
+	if ct != "application/javascript; charset=utf-8" {
+		t.Fatalf("Content-Type = %q, want %q", ct, "application/javascript; charset=utf-8")
+	}
+}
+
+func TestHandleDecode_InvalidImageData(t *testing.T) {
+	handler := NewHandler()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, _ := writer.CreateFormFile("image", "test.png")
+	part.Write([]byte("this is not valid image data"))
+	writer.Close()
+
+	req := httptest.NewRequest(http.MethodPost, "/api/decode", body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, req)
+
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("returned status %d, want %d", w.Code, http.StatusBadRequest)
+	}
+}

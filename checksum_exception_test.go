@@ -1,11 +1,10 @@
 package gozxing
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
-
-	errors "golang.org/x/xerrors"
 )
 
 func testChecksumExceptionType(t testing.TB, e error) {

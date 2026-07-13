@@ -3,7 +3,7 @@ package gozxing
 import (
 	"math/bits"
 
-	errors "golang.org/x/xerrors"
+	"errors"
 )
 
 type BitArray struct {

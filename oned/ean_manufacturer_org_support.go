@@ -116,7 +116,7 @@ var eanManufacturerOrgSupportList = []struct {
 	{899, 899, "ID"},
 	{900, 919, "AT"},
 	{930, 939, "AU"},
-	{940, 949, "AZ"},
+	{940, 949, "GS1"},
 	{955, 955, "MY"},
 	{958, 958, "MO"},
 }

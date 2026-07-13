@@ -81,30 +81,28 @@
     // 复制按钮
     btnCopy.addEventListener('click', function() {
         const text = resultText.textContent;
-        if (text) {
-            navigator.clipboard.writeText(text).then(function() {
-                btnCopy.textContent = '已复制';
-                btnCopy.classList.add('copied');
-                setTimeout(function() {
-                    btnCopy.textContent = '复制';
-                    btnCopy.classList.remove('copied');
-                }, 2000);
-            }).catch(function() {
-                // 降级方案
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                btnCopy.textContent = '已复制';
-                btnCopy.classList.add('copied');
-                setTimeout(function() {
-                    btnCopy.textContent = '复制';
-                    btnCopy.classList.remove('copied');
-                }, 2000);
-            });
+        if (!text) return;
+
+        // 使用 textarea + execCommand 兼容 HTTP 环境
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            btnCopy.textContent = '已复制';
+            btnCopy.classList.add('copied');
+            setTimeout(function() {
+                btnCopy.textContent = '复制';
+                btnCopy.classList.remove('copied');
+            }, 2000);
+        } catch (e) {
+            btnCopy.textContent = '复制失败';
         }
+        document.body.removeChild(textarea);
     });
 
     // 处理文件

@@ -3,7 +3,7 @@ package gozxing
 import (
 	"sync"
 
-	errors "golang.org/x/xerrors"
+	"errors"
 )
 
 type BinaryBitmap struct {

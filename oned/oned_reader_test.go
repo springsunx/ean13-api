@@ -1,10 +1,9 @@
 package oned
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
-
-	errors "golang.org/x/xerrors"
 
 	"github.com/springsunx/ean13-api"
 )
@@ -95,7 +94,7 @@ func newTestBitSource(height int, bits string) gozxing.LuminanceSource {
 func (this *testBitSource) GetRow(y int, row []byte) ([]byte, error) {
 	w := len(this.bits)
 	if w <= 0 {
-		return nil, errors.Errorf("GetRow error: width=%v", w)
+		return nil, fmt.Errorf("GetRow error: width=%v", w)
 	}
 
 	if len(row) < w {

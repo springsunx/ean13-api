@@ -1,10 +1,9 @@
 package gozxing
 
 import (
+	"errors"
 	"fmt"
 	"testing"
-
-	errors "golang.org/x/xerrors"
 )
 
 func testFormatExceptionType(t testing.TB, e error) {

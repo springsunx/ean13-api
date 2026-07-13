@@ -1,11 +1,10 @@
 package gozxing
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
-
-	errors "golang.org/x/xerrors"
 )
 
 func newTestException(args ...interface{}) ReaderException {
@@ -21,7 +20,7 @@ func TestException_Format(t *testing.T) {
 	cases := []string{
 		"TestException: 10 a:",
 		"ean13-api.TestException_Format",
-		"reader_exception_test.go:18",
+		"reader_exception_test.go:17",
 	}
 	for _, c := range cases {
 		if strings.Index(s, c) < 0 {
@@ -42,7 +41,6 @@ func TestWrapReaderException(t *testing.T) {
 	cases := []string{
 		"base error",
 		"ean13-api.TestWrapReaderException",
-		"reader_exception_test.go:35",
 		"reader_exception_test.go:34",
 	}
 	for _, c := range cases {

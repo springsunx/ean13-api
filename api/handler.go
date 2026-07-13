@@ -10,8 +10,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/springsunx/ean13-api"
-	"github.com/springsunx/ean13-api/oned"
+	"github.com/springsunx/ean13-api/decode"
 )
 
 //go:embed web/*
@@ -96,7 +95,7 @@ func handleDecode(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(DecodeResponse{
 			Success: false,
-			Error:   "failed to parse form: " + err.Error(),
+			Error:   "failed to parse form data",
 		})
 		return
 	}
@@ -106,7 +105,7 @@ func handleDecode(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(DecodeResponse{
 			Success: false,
-			Error:   "missing 'image' field in form: " + err.Error(),
+			Error:   "missing 'image' field in form",
 		})
 		return
 	}
@@ -117,26 +116,12 @@ func handleDecode(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(DecodeResponse{
 			Success: false,
-			Error:   "failed to decode image: " + err.Error(),
+			Error:   "failed to decode image: unsupported or corrupted image format",
 		})
 		return
 	}
 
-	bmp, err := gozxing.NewBinaryBitmapFromImage(img)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(DecodeResponse{
-			Success: false,
-			Error:   "failed to create bitmap: " + err.Error(),
-		})
-		return
-	}
-
-	reader := oned.NewEAN13Reader()
-	hints := map[gozxing.DecodeHintType]interface{}{
-		gozxing.DecodeHintType_TRY_HARDER: true,
-	}
-	result, err := reader.Decode(bmp, hints)
+	result, err := decode.EAN13(img)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(DecodeResponse{
@@ -148,7 +133,7 @@ func handleDecode(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(DecodeResponse{
 		Success: true,
-		Text:    result.GetText(),
-		Format:  result.GetBarcodeFormat().String(),
+		Text:    result.Text,
+		Format:  result.Format,
 	})
 }

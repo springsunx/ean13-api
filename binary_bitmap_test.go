@@ -1,14 +1,13 @@
 package gozxing
 
 import (
+	"errors"
 	"image"
 	"image/color"
 	"runtime"
 	"sync"
 	"sync/atomic"
 	"testing"
-
-	errors "golang.org/x/xerrors"
 )
 
 type testBinarizer struct {
