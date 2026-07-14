@@ -16,6 +16,14 @@
     const errorText = document.getElementById('errorText');
 
     let currentFile = null;
+    let currentObjectURL = null;
+    let serverConfig = null;
+
+    // 启动时获取服务器配置
+    fetch('/api/config')
+        .then(function(r) { return r.json(); })
+        .then(function(cfg) { serverConfig = cfg; })
+        .catch(function() {});
 
     // 点击上传区域触发文件选择
     uploadArea.addEventListener('click', function() {
@@ -107,8 +115,15 @@
 
     // 处理文件
     function handleFile(file) {
-        if (!file.type.match(/image\/(jpeg|png|gif|bmp|webp)/)) {
-            showError('请上传图片文件（JPEG、PNG、GIF、BMP、WebP）');
+        // 仅接受 PNG 和 JPEG
+        if (!file.type.match(/image\/(jpeg|png)/)) {
+            showError('仅支持 PNG 和 JPEG 格式');
+            return;
+        }
+
+        // 检查服务器配置的文件大小限制
+        if (serverConfig && file.size > serverConfig.maxUploadBytes) {
+            showError('文件过大（最大 ' + Math.round(serverConfig.maxUploadBytes / 1024 / 1024) + ' MiB）');
             return;
         }
 
@@ -116,20 +131,24 @@
         hideError();
         hideResult();
 
-        // 显示预览
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewImage.src = e.target.result;
-            previewArea.style.display = 'block';
-            uploadArea.style.display = 'none';
-            btnDecode.disabled = false;
-        };
-        reader.readAsDataURL(file);
+        // 使用对象 URL 预览（比 Base64 更高效，不占用额外内存）
+        if (currentObjectURL) {
+            URL.revokeObjectURL(currentObjectURL);
+        }
+        currentObjectURL = URL.createObjectURL(file);
+        previewImage.src = currentObjectURL;
+        previewArea.style.display = 'block';
+        uploadArea.style.display = 'none';
+        btnDecode.disabled = false;
     }
 
     // 清除图片
     function clearImage() {
         currentFile = null;
+        if (currentObjectURL) {
+            URL.revokeObjectURL(currentObjectURL);
+            currentObjectURL = null;
+        }
         previewImage.src = '';
         previewArea.style.display = 'none';
         uploadArea.style.display = 'block';

@@ -24,11 +24,68 @@ func NewLuminanceSourceFromImage(img image.Image) LuminanceSource {
 	index := 0
 	// Optimize special cases.
 	switch img := img.(type) {
+	case *image.YCbCr:
+		// Fast path: YCbCr images (produced by image/jpeg).
+		// The Y channel IS luminance (ITU-R BT.601), so we can copy it directly.
+		// This is the fastest possible path for JPEG images.
+		stride := img.YStride
+		baseOffset := (rect.Min.Y-img.Rect.Min.Y)*stride + (rect.Min.X - img.Rect.Min.X)
+		for y := 0; y < height; y++ {
+			srcOffset := baseOffset + y*stride
+			copy(luminance[index:index+width], img.Y[srcOffset:srcOffset+width])
+			index += width
+		}
 	case *image.Gray:
-		for y := rect.Min.Y; y < rect.Max.Y; y++ {
-			for x := rect.Min.X; x < rect.Max.X; x++ {
-				y := img.GrayAt(x, y).Y
-				luminance[index] = y
+		// Fast path: direct Pix slice access for Gray images (common from JPEG grayscale)
+		stride := img.Stride
+		baseOffset := (rect.Min.Y-img.Rect.Min.Y)*stride + (rect.Min.X - img.Rect.Min.X)
+		for y := 0; y < height; y++ {
+			srcOffset := baseOffset + y*stride
+			copy(luminance[index:index+width], img.Pix[srcOffset:srcOffset+width])
+			index += width
+		}
+	case *image.NRGBA:
+		// Fast path: direct Pix slice access for NRGBA images (common from PNG)
+		// Uses the same luminance formula as the default path: (R + 2*G + B) / 4
+		stride := img.Stride
+		baseOffset := (rect.Min.Y-img.Rect.Min.Y)*stride + (rect.Min.X-img.Rect.Min.X)*4
+		for y := 0; y < height; y++ {
+			srcOffset := baseOffset + y*stride
+			for x := 0; x < width; x++ {
+				pi := srcOffset + x*4
+				r := int(img.Pix[pi])
+				g := int(img.Pix[pi+1])
+				b := int(img.Pix[pi+2])
+				a := int(img.Pix[pi+3])
+				lum := (r + 2*g + b) / 4
+				// Alpha blend with white background
+				luminance[index] = byte((lum*a + (255-a)*255) / 255)
+				index++
+			}
+		}
+	case *image.RGBA:
+		// Fast path: direct Pix slice access for RGBA images (premultiplied alpha)
+		// For fully opaque pixels (A=255), luminance = (R + 2*G + B) / 4
+		stride := img.Stride
+		baseOffset := (rect.Min.Y-img.Rect.Min.Y)*stride + (rect.Min.X-img.Rect.Min.X)*4
+		for y := 0; y < height; y++ {
+			srcOffset := baseOffset + y*stride
+			for x := 0; x < width; x++ {
+				pi := srcOffset + x*4
+				r := int(img.Pix[pi])
+				g := int(img.Pix[pi+1])
+				b := int(img.Pix[pi+2])
+				a := int(img.Pix[pi+3])
+				if a == 0 {
+					luminance[index] = 255
+				} else {
+					// Un-premultiply, compute luminance, then alpha-blend with white
+					ur := r * 255 / a
+					ug := g * 255 / a
+					ub := b * 255 / a
+					lum := (ur + 2*ug + ub) / 4
+					luminance[index] = byte((lum*a + (255-a)*255) / 255)
+				}
 				index++
 			}
 		}
