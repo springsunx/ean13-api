@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"embed"
 	"encoding/json"
 	"image"
@@ -11,6 +12,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/springsunx/ean13-api/decode"
 )
@@ -56,6 +58,8 @@ func NewHandler() *http.ServeMux {
 	// API routes
 	mux.HandleFunc("/api/decode", handleDecode)
 	mux.HandleFunc("/api/config", handleConfig)
+	mux.HandleFunc("/api/mcp/test", handleMCPTest)
+	mux.HandleFunc("/api/barcode/lookup", handleBarcodeLookup)
 	mux.HandleFunc("/health", handleHealth)
 
 	// Serve embedded frontend files
@@ -224,4 +228,106 @@ func handleDecode(w http.ResponseWriter, r *http.Request) {
 		Text:    result.Text,
 		Format:  result.Format,
 	})
+}
+
+// handleMCPTest tests a connection to a remote MCP server.
+func handleMCPTest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(MCPTestResponse{
+			Success: false,
+			Error:   "method not allowed, use POST",
+		})
+		return
+	}
+
+	var cfg MCPConfig
+	if err := json.NewDecoder(r.Body).Decode(&cfg); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(MCPTestResponse{
+			Success: false,
+			Error:   "invalid JSON body: " + err.Error(),
+		})
+		return
+	}
+
+	if cfg.URL == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(MCPTestResponse{
+			Success: false,
+			Error:   "url is required",
+		})
+		return
+	}
+
+	// 15-second timeout for connection test
+	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+	defer cancel()
+
+	resp, err := testMCPConnection(ctx, cfg)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		json.NewEncoder(w).Encode(MCPTestResponse{
+			Success: false,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(w).Encode(resp)
+}
+
+// handleBarcodeLookup queries a remote MCP server for barcode product info.
+func handleBarcodeLookup(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(BarcodeLookupResponse{
+			Success: false,
+			Error:   "method not allowed, use POST",
+		})
+		return
+	}
+
+	// Limit request body to 2 MiB
+	r.Body = http.MaxBytesReader(w, r.Body, 2<<20)
+
+	var req BarcodeLookupRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(BarcodeLookupResponse{
+			Success: false,
+			Error:   "invalid JSON body: " + err.Error(),
+		})
+		return
+	}
+
+	if req.EAN13 == "" || req.MCP.URL == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(BarcodeLookupResponse{
+			Success: false,
+			Error:   "ean13 and mcp configuration are required",
+		})
+		return
+	}
+
+	// 15-second timeout for connection + lookup
+	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+	defer cancel()
+
+	resp, err := lookupBarcode(ctx, req)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		json.NewEncoder(w).Encode(BarcodeLookupResponse{
+			Success: false,
+			EAN13:   req.EAN13,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(w).Encode(resp)
 }

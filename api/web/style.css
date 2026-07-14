@@ -241,6 +241,319 @@ kbd {
     text-align: center;
 }
 
+/* ========== Product Card ========== */
+
+.product-card {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f0f7ff;
+    border-radius: 12px;
+    border: 1px solid #b3d4fc;
+}
+
+.product-card h2 {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.product-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #555;
+    font-size: 14px;
+}
+
+.product-spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid #b3d4fc;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.product-status {
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    padding: 8px 0;
+}
+
+.product-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.product-image-wrap {
+    text-align: center;
+}
+
+.product-image-wrap img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.product-field-item label {
+    display: block;
+    color: #666;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.product-field-item .product-field-value {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    color: #333;
+    word-break: break-word;
+}
+
+.product-json-view {
+    margin-top: 12px;
+}
+
+.product-json-view label {
+    display: block;
+    color: #666;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.product-json-view pre {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 13px;
+    font-family: "Courier New", monospace;
+    color: #333;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* ========== MCP Settings Panel ========== */
+
+.mcp-panel {
+    margin-top: 30px;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+
+.mcp-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.mcp-panel-header:hover {
+    background: #eef0f2;
+}
+
+.mcp-panel-header h2 {
+    color: #333;
+    font-size: 16px;
+    margin: 0;
+}
+
+.mcp-toggle-icon {
+    font-size: 12px;
+    color: #666;
+    transition: transform 0.2s;
+}
+
+.mcp-toggle-icon.open {
+    transform: rotate(180deg);
+}
+
+.mcp-panel-body {
+    padding: 20px;
+    background: #fafafa;
+}
+
+.mcp-field {
+    margin-bottom: 16px;
+}
+
+.mcp-field:last-of-type {
+    margin-bottom: 0;
+}
+
+.mcp-field label {
+    display: block;
+    color: #555;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.mcp-field textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    resize: vertical;
+    background: #fff;
+    color: #333;
+}
+
+.mcp-field textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.mcp-hint {
+    color: #999;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.mcp-field select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fff;
+    color: #333;
+}
+
+.mcp-url-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.mcp-url-input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: "Courier New", monospace;
+    background: #fff;
+    color: #333;
+}
+
+.mcp-url-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.btn-url-toggle,
+.btn-url-edit {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: background 0.2s;
+}
+
+.btn-url-toggle:hover,
+.btn-url-edit:hover {
+    background: #e0e0e0;
+}
+
+.mcp-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.btn-mcp {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-mcp:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-test {
+    background: #667eea;
+    color: white;
+}
+
+.btn-test:hover:not(:disabled) {
+    background: #5a6fd6;
+}
+
+.btn-save {
+    background: #28a745;
+    color: white;
+}
+
+.btn-save:hover:not(:disabled) {
+    background: #218838;
+}
+
+.btn-clear-config {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-clear-config:hover:not(:disabled) {
+    background: #c82333;
+}
+
+.mcp-test-result {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.mcp-test-result.success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.mcp-test-result.error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
 footer {
     margin-top: 30px;
     text-align: center;
@@ -268,5 +581,18 @@ footer a:hover {
 
     .upload-area {
         padding: 40px 16px;
+    }
+
+    .mcp-actions {
+        flex-direction: column;
+    }
+
+    .btn-mcp {
+        width: 100%;
+        text-align: center;
+    }
+
+    .mcp-url-row {
+        flex-wrap: wrap;
     }
 }

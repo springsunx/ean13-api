@@ -52,6 +52,77 @@
             <p id="errorText"></p>
         </div>
 
+        <!-- 商品信息卡片 -->
+        <div class="product-card" id="productCard" style="display: none;">
+            <h2>商品信息</h2>
+            <div class="product-loading" id="productLoading" style="display: none;">
+                <div class="product-spinner"></div>
+                <span>正在查询商品信息...</span>
+            </div>
+            <div class="product-status" id="productStatus" style="display: none;">
+                <p id="productStatusText"></p>
+            </div>
+            <div class="product-content" id="productContent" style="display: none;">
+                <div class="product-image-wrap" id="productImageWrap" style="display: none;">
+                    <img id="productImage" src="" alt="商品图片">
+                </div>
+                <div class="product-fields" id="productFields"></div>
+            </div>
+            <div class="product-json-view" id="productJsonView" style="display: none;">
+                <label>原始响应</label>
+                <pre id="productJsonContent"></pre>
+            </div>
+        </div>
+
+        <!-- MCP 查询设置面板 -->
+        <div class="mcp-panel" id="mcpPanel">
+            <div class="mcp-panel-header" id="mcpPanelHeader">
+                <h2>MCP 查询设置</h2>
+                <span class="mcp-toggle-icon" id="mcpToggleIcon">&#9660;</span>
+            </div>
+            <div class="mcp-panel-body" id="mcpPanelBody" style="display: none;">
+                <div class="mcp-field">
+                    <label for="mcpJsonInput">粘贴 mcpServers JSON</label>
+                    <textarea id="mcpJsonInput" rows="4" placeholder='{ "mcpServers": { "example": { "type": "streamableHttp", "url": "https://example.com/mcp" } } }'></textarea>
+                    <p class="mcp-hint">支持 streamableHttp、streamable-http 和 sse 类型</p>
+                </div>
+
+                <div class="mcp-field" id="mcpServerSelectField" style="display: none;">
+                    <label for="mcpServerSelect">选择服务器</label>
+                    <select id="mcpServerSelect"></select>
+                </div>
+
+                <div class="mcp-field">
+                    <label>服务器 URL</label>
+                    <div class="mcp-url-row">
+                        <input type="text" id="mcpUrlDisplay" class="mcp-url-input" placeholder="未配置" readonly>
+                        <button class="btn-url-toggle" id="btnUrlToggle" title="显示/隐藏">👁</button>
+                        <button class="btn-url-edit" id="btnUrlEdit" title="编辑 URL">✏️</button>
+                    </div>
+                </div>
+
+                <div class="mcp-actions">
+                    <button class="btn-mcp btn-test" id="btnMcpTest">连接测试</button>
+                    <button class="btn-mcp btn-save" id="btnMcpSave">保存配置</button>
+                    <button class="btn-mcp btn-clear-config" id="btnMcpClear">清除</button>
+                </div>
+
+                <div class="mcp-test-result" id="mcpTestResult" style="display: none;">
+                    <p id="mcpTestResultText"></p>
+                </div>
+
+                <div class="mcp-field" id="mcpToolSelectField" style="display: none;">
+                    <label for="mcpToolSelect">选择工具</label>
+                    <select id="mcpToolSelect"></select>
+                </div>
+
+                <div class="mcp-field" id="mcpParamSelectField" style="display: none;">
+                    <label for="mcpParamSelect">选择参数</label>
+                    <select id="mcpParamSelect"></select>
+                </div>
+            </div>
+        </div>
+
         <footer>
             <p>基于 <a href="https://github.com/makiuchi-d/gozxing" target="_blank">gozxing</a> 构建</p>
         </footer>
